@@ -1,0 +1,19 @@
+{
+  "name": "public-assets",
+  "version": "1.0.0",
+  "description": "Scripts for Autopilot",
+  "main": "convert-to-classic.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yonifra/public-assets.git"
+  },
+  "author": "Yoni Fraimorice",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yonifra/public-assets/issues"
+  },
+  "homepage": "https://github.com/yonifra/public-assets#readme"
+}
