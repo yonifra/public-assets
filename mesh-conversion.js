@@ -20,14 +20,11 @@ const getProgressData = (progress) => {
 }
 
 const onSuccess = () => {
-	console.log('migration success')
-	//need to publish the site
+	console.log('Mesh migration successfully done')
 }
 
 const onReject = (error) => {
-	// the cancel will throw error as well
-	console.error('migration failed', error)
-	//need to return to the first revision before the migration
+	console.error('Mesh migration failed', error)
 }
 
 const updateMigrationProgressCallback = (progress = {}) => {
@@ -40,10 +37,10 @@ const updateMigrationProgressCallback = (progress = {}) => {
 	if (progressData) {
 		console.log('migration in progress', progressData)
 
-		if (progressData.pagesCounter > 20){
-			documentServices.site.cancelSiteToMeshMigration()
+		if (progressData.pagesCounter > 100){
 			// should call save
 			// should refresh the editor
+			documentServices.site.cancelSiteToMeshMigration()
 		}
 	}
 }
