@@ -1,12 +1,8 @@
 
 try {
-    window.autopilot.log('start script')
-
-    const isPublished = window.autopilot.isPublishedRevision
-
-    window.autopilot.log('end script')
-
-    window.autopilot.reportResult(`Site title is: ${rendererModel.siteInfo.siteTitleSEO}`)
+	window.autopilot.log('start script')
+	window.autopilot.log('end script')
+	window.autopilot.reportResult(`Site title is: ${rendererModel.siteInfo.siteTitleSEO}`)
 } catch (e) {
-    window.autopilot.reportError(e)
+	window.autopilot.reportError(e)
 }
