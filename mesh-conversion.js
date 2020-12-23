@@ -1,11 +1,3 @@
-const dsIframe =
-    document.getElementById('preview') ||
-      document.getElementsByClassName('preview')[0] ||
-      document.getElementsByName('preview-frame')[0] ||
-      document.getElementsByTagName('iframe')[0]
-
-const documentServices = window.documentServices || dsIframe.contentWindow.documentServices
-
 let pagesCounter = 0
 
 const getProgressData = (progress) => {
@@ -38,11 +30,21 @@ const updateMigrationProgressCallback = (progress = {}) => {
 		console.log('migration in progress', progressData)
 
 		if (progressData.pagesCounter > 100){
-			// should call save
-			// should refresh the editor
 			documentServices.site.cancelSiteToMeshMigration()
 		}
 	}
 }
 
-documentServices.site.migrateSiteToMesh(onSuccess, onReject, {updateCallback: updateMigrationProgressCallback})
+try {
+	window.autopilot.log('start script')
+
+	window.autopilot.log('migrating site to mesh')
+
+	documentServices.site.migrateSiteToMesh(onSuccess, onReject, { updateCallback: updateMigrationProgressCallback })
+
+    window.autopilot.log('end script')
+
+    window.autopilot.reportResult('Site was successfully migrated to MESH')
+} catch (e) {
+	window.autopilot.reportError(`Failed to migrate site to MESH ${e.message}`)
+}
