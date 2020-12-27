@@ -35,21 +35,15 @@ const updateMigrationProgressCallback = (progress = {}) => {
 	}
 }
 
-const wait = async () => {
-	await documentServices.SOQ.waitForChangesAppliedAsync()
-}
-
 try {
 	window.autopilot.log('start script')
-
 	window.autopilot.log('migrating site to mesh')
 
+	// Actually run the Mesh migration
 	documentServices.initAutosave({enabled: false})
 	documentServices.site.migrateSiteToMesh(onSuccess, onReject, { isMigrationForced: false, updateCallback: updateMigrationProgressCallback })
-	wait()
 
     window.autopilot.log('end script')
-
     window.autopilot.reportResult('Site was successfully migrated to MESH')
 } catch (e) {
 	window.autopilot.reportError(`Failed to migrate site to MESH ${e.message}`)
