@@ -1,50 +1,78 @@
+// if (typeof window.autopilot === 'undefined') {
+// 	window.autopilot = {}
+// 	window.autopilot.payload = {
+// 		pagesToProccess: 100
+// 	}
+// 	window.autopilot.reportResult = (response) => {
+// 		console.log('DONE, response is:', response)
+// 	}
+// 	window.autopilot.reportError = (error) => {
+// 		console.error('FAILED', e)
+// 	}
+// }
+
 let pagesCounter = 0
 
-const getProgressData = (progress) => {
-	const progressUpdates = {
-		init: () => ({totalPagesToMigrate: progress.maxValue }),
-		done: () => ({ isDone: true }),
-		'view-mode': () => ({ viewMode: progress.viewMode }),
-		'page-migrated': () => ({pagesCounter: pagesCounter++})
-	}
-
-	return progressUpdates[progress.status] ? progressUpdates[progress.status]() : null
-}
-
-const onSuccess = () => {
-	console.log('Mesh migration successfully done')
-}
-
-const onReject = (error) => {
-	console.error('Mesh migration failed', error)
-}
-
-const updateMigrationProgressCallback = (progress = {}) => {
-	if (_.isEmpty(progress)) {
-		return
-	}
-
-	const progressData = getProgressData(progress)
-
-	if (progressData) {
-		console.log('migration in progress', progressData)
-
-		if (progressData.pagesCounter > 100){
-			documentServices.site.cancelSiteToMeshMigration()
-		}
-	}
-}
-
-try {
-	window.autopilot.log('start script')
-	window.autopilot.log('migrating site to mesh')
-
-	// Actually run the Mesh migration
+const migrate = async () => {
+	console.log('before')
 	documentServices.initAutosave({enabled: false})
-	documentServices.site.migrateSiteToMesh(onSuccess, onReject, { isMigrationForced: false, updateCallback: updateMigrationProgressCallback })
+	await new Promise((resolve, reject) => {
+		documentServices.site.migrateSiteToMesh(() => {
+			resolve()
+		}, () => {
+			reject()
+		}, {
+			updateCallback: (progress = {}) => {
+				if (_.isEmpty(progress)) {
+					return
+				}
 
-    window.autopilot.log('end script')
-    window.autopilot.reportResult('Site was successfully migrated to MESH')
-} catch (e) {
-	window.autopilot.reportError(`Failed to migrate site to MESH ${e.message}`)
+				switch (progress.status) {
+					case 'init':
+
+					break;
+					case 'view-mode':
+
+					break;
+					case 'page-migrated':
+						pagesCounter++
+
+						if (pagesCounter > window.autopilot.payload.pagesToProccess) {
+							documentServices.site.cancelSiteToMeshMigration()
+							resolve() // todo: check if dont is not called
+						}
+					break;
+					case 'done':
+						resolve()
+					break;
+				}
+
+				// const progressUpdates = {
+				// 	init: () => ({totalPagesToMigrate: progress.maxValue }),
+				// 	done: () => {
+				// 		console.log('Done!')
+				// 		resolve()
+				// 	},
+				// 	'view-mode': () => ({ viewMode: progress.viewMode }),
+				// 	'page-migrated': () => ({pagesCounter: pagesCounter++})
+				// }
+
+				// return progressUpdates[progress.status] ? progressUpdates[progress.status]() : null
+
+			}
+		})
+	})
+	documentServices.initAutosave({ enabled: true })
+
+
+	console.log('after')
 }
+
+
+migrate()
+	.then(response => {
+		window.autopilot.reportResult('Site was successfully migrated to MESH')
+	})
+	.catch(e=> {
+		window.autopilot.reportError(`Failed to migrate site to MESH ${e.message}`)
+	})
