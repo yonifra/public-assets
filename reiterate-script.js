@@ -1,4 +1,4 @@
-let iteration = window.autopilot.payload.iterationNumber
+let {iterationNumber} = window.autopilot.payload
 
 const migrate = async () => {
 	console.log('before')
