@@ -3,10 +3,6 @@ let { iterationNumber, isPublishedRevision } = window.autopilot
 
 const migrate = async () => {
     const pointer = { id: componentId, type: 'DESKTOP' }
-
-    const data = documentServices.components.data.get(pointer).text
-    iterationNumber = parseInt(data[data.length - 6])
-
     documentServices.components.data.update(pointer, { text: `<h3 class="font_5">${isPublishedRevision ? 'Published' : 'Last Saved'}: ${iterationNumber}</h3>` })
 }
 
