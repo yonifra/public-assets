@@ -1,10 +1,11 @@
-let {iterationNumber} = window.autopilot.payload
+let {componentId} = window.autopilot.payload
 
 const migrate = async () => {
-	console.log('before')
-	documentServices.initAutosave({ enabled: false })
-	documentServices.initAutosave({ enabled: true })
-    console.log('after')
+    const pointer = { id: componentId, type: 'DESKTOP' }
+
+    const data = documentServices.components.data.get(pointer).text
+    const iterationNumber = parseInt(data[data.length - 6]);
+    documentServices.components.data.update(pointer, {text: `<h3 class="font_5">${iterationNumber + 1}</h3>`})
 }
 
 migrate()
