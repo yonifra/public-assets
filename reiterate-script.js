@@ -8,8 +8,12 @@ const migrate = async () => {
 
 migrate()
     .then(response => {
-        const shouldReiterate = isPublishedRevision ? iterationNumber < maxIterationsForPublished : iterationNumber < maxIterationsForLastSaved
-		window.autopilot.reportResult(`Site was successfully migrated! (iteration #${iterationNumber})`, {reiterate: shouldReiterate})
+		if (iterationNumber === maxIterationsForLastSaved) {
+			window.autopilot.reportError(`Not really failed, but we've reached the last lastSaved iteration, and we wanna see where we fallback to`)
+		} else {
+			const shouldReiterate = isPublishedRevision ? iterationNumber < maxIterationsForPublished : iterationNumber < maxIterationsForLastSaved
+			window.autopilot.reportResult(`Site was successfully migrated! (iteration #${iterationNumber})`, {reiterate: shouldReiterate})
+		}
 	})
 	.catch(e=> {
 		window.autopilot.reportError(`Failed to run site with iterations, reason: ${e.message}`)
