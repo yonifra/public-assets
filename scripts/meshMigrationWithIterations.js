@@ -20,13 +20,16 @@ const migrate = async () => {
 
 					switch (progress.status) {
 						case 'init':
+							window.autopilot.log(`initializing migration with ${window.autopilot.payload.pagesToProccess} pages to process per iteration`)
 							break
 						case 'view-mode':
 							break
 						case 'page-migrated':
 							pagesCounter++
 
+							window.autopilot.log(`callback, migrated page ${pagesCounter}`)
 							if (pagesCounter > window.autopilot.payload.pagesToProccess) {
+								window.autopilot.log(`${pagesCounter} pages migrated, reiterating...`)
 								documentServices.site.cancelSiteToMeshMigration()
 								reiterate = true
 
