@@ -1,16 +1,45 @@
 let pagesCounter = 0
 let reiterate = false
 
+// const getProgressData = (progress) => {
+// 	const progressUpdates = {
+// 		init: () => {},
+// 		done: () => {},
+// 		'view-mode': () => ({ viewMode: progress.viewMode }),
+// 		'page-migrated': () => ({pagesCounter: pagesCounter++})
+// 	};
+
+// 	return progressUpdates[progress.status] ? progressUpdates[progress.status]() : null;
+// };
+
+// const updateMigrationProgressCallback = (progress = {}) => {
+//   if (_.isEmpty(progress)) {
+//     return;
+//   }
+
+//   const progressData = getProgressData(progress);
+//   if (progressData) {
+//     console.log('migration in progress', progressData)
+//     if (progressData.pagesCounter > window.autopilot.payload.pagesToProccess){
+//       documentServices.site.cancelSiteToMeshMigration()
+//       // should call save
+//       // should refresh the editor
+//     }
+//   }
+// }
+
 const migrate = async () => {
 	console.log('before')
 	documentServices.initAutosave({ enabled: false })
 	await new Promise((resolve, reject) => {
 		documentServices.site.migrateSiteToMesh(
 			() => {
+				// Migration succeeded
 				resolve()
 			},
-			() => {
-				reject()
+			(e) => {
+				// Migration failed
+				reject(e.message)
 			},
 			{
 				updateCallback: (progress = {}) => {
