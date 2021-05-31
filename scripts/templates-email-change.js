@@ -13,8 +13,6 @@ const migrate = async () => {
   modifiedIds.forEach(itemToChange => {
     const component = _(structure).filter(possibleComponent => _.includes(possibleComponent.dataQuery, itemToChange.id)).head()
     const id = component.id.replace('#', '')
-
-    // itemToChange.originalItem.linkList is ["#textLink_klhyf403"]
     const linkData = documentServices.data.getById(itemToChange.originalItem.linkList[0].replace('#', ''))
     itemToChange.originalItem.linkList = [linkData]
     documentServices.components.data.update({id, type:'DESKTOP'}, itemToChange.originalItem)
