@@ -1,6 +1,4 @@
 const migrate = async () => {
-  documentServices.initAutosave({ enabled: false })
-
   const documentData = boltInstance.$model.data.document_data
   const originalEmail = 'info@my-domain.com'
   const newEmail = 'info@mysite.com'
@@ -14,10 +12,13 @@ const migrate = async () => {
   const structure = boltInstance.$model.structure
   modifiedIds.forEach(itemToChange => {
     const component = _(structure).filter(possibleComponent => _.includes(possibleComponent.dataQuery, itemToChange.id)).head()
-    documentServices.components.data.update({id: component.id, type:'DESKTOP'}, itemToChange.originalItem)
-  })
+    const id = component.id.replace('#', '')
 
-  documentServices.initAutosave({ enabled: true })
+    // itemToChange.originalItem.linkList is ["#textLink_klhyf403"]
+    const linkData = documentServices.data.getById(itemToChange.originalItem.linkList[0].replace('#', ''))
+    itemToChange.originalItem.linkList = [linkData]
+    documentServices.components.data.update({id, type:'DESKTOP'}, itemToChange.originalItem)
+  })
 }
 migrate()
   .then((response) => {
